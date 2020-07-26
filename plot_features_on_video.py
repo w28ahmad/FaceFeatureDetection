@@ -1,21 +1,22 @@
 import cv2
 import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
 from detect_human_features import ROOT, define_labels, unnormalize, normalize
 import os
 
-VID = os.path.join(ROOT, "videoData", "videoplayback.mp4")
+VID = os.path.join(ROOT, "videoData", "homealone.mp4")
 HEIGHT, WIDTH, CHANNELS = (218, 178, 1)
 haarcascade = os.path.join(ROOT, "haarcascade_frontalface_default.xml")
 model = tf.keras.models.load_model("model1.h5")
 
 def detect_features(file=VID):
-    cap = cv2.VideoCapture(VID)
+    cap = cv2.VideoCapture(0)
 
     ret = True
     while(ret):
         # Read through the frames
         ret, frame = cap.read()
-
         if(frame is not None):
             # Make the frame gray
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -23,22 +24,31 @@ def detect_features(file=VID):
             face_cascade = cv2.CascadeClassifier(haarcascade)
             faces = face_cascade.detectMultiScale(gray, 1.3, 5)
             for (x, y, w, h) in faces:
-                model_input = gray[y:y+HEIGHT, x:x+WIDTH]
-                # Reshape & normalize
-                model_input, _, _ = normalize(model_input, None, None)
                 try:
-                    model_input = model_input.reshape(-1, 218, 178, 1)
-                    assert model_input.shape == (-1, 218, 178, 1)
-                except:
-                    pass
-                predict_labels = model.predict(model_input)[0]
-                x_predict, y_predict = define_labels(predict_labels)
-                _, x_predict, y_predict = unnormalize(0, x_predict, y_predict)
+                    # if w > WIDTH and h > HEIGHT:
+                    model_input = gray[y:y+HEIGHT, x:x+WIDTH]
+                    # else:
+                    #     model_input_short = gray[y:y+h, x:x+w]
+                    #     color = 0 # Black
+                    #     model_input = np.full((HEIGHT,WIDTH), color, dtype=np.uint8)
+                    #     model_input[:h,:w] = model_input_short
 
-                # Draw Labels
-                for xp, yp in zip(x_predict, y_predict):
-                    cv2.circle(frame, (int(x+xp), int(y+yp)), 4, (255, 255, 255), -1)
-                cv2.rectangle(frame,(x,y),(x+WIDTH,y+HEIGHT),(255,0,0),2)
+                    # Reshape & normalize
+                    model_input, _, _ = normalize(model_input, None, None)
+                    model_input = model_input.reshape(-1, 218, 178, 1)
+                    assert model_input.shape == (1, 218, 178, 1)
+                    predict_labels = model.predict(model_input)[0]
+                    x_predict, y_predict = define_labels(predict_labels)
+                    _, x_predict, y_predict = unnormalize(0, x_predict, y_predict)
+
+                    # Draw Labels
+                    for xp, yp in zip(x_predict, y_predict):
+                        # if xp < w and yp < h:
+                        cv2.circle(frame, (int(x+xp), int(y+yp)), 4, (255, 255, 255), -1)
+                    cv2.rectangle(frame,(x,y),(x+WIDTH,y+HEIGHT),(255,0,0),2)
+                except Exception as e:
+                    print(e)
+                    pass
 
         # Display the resulting frame
         cv2.imshow('frame',frame)

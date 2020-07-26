@@ -160,8 +160,10 @@ def normalize(image, x_vals, y_vals):
 
     # Normalize
     image /= 255
-    x_vals = (x_vals - WIDTH/2)/(WIDTH/2)
-    y_vals = (y_vals - HEIGHT/2)/(HEIGHT/2)
+    if x_vals:
+        x_vals = (x_vals - WIDTH/2)/(WIDTH/2)
+    if y_vals:
+        y_vals = (y_vals - HEIGHT/2)/(HEIGHT/2)
 
     return image, x_vals, y_vals
 

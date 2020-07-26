@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from detect_human_features import get_labels, gray_image, show_image, get_data, define_labels, unnormalize, draw_labels
 
-model = tf.keras.models.load_model("model8.h5")
+model = tf.keras.models.load_model("model1.h5")
 IMAGE = np.random.randint(1000, 200000, size=1)[0]
 
 def selectImage():

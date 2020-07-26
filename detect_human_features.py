@@ -285,26 +285,39 @@ def create_model(X_train):
     return model
 
 def train_model():
-    hmap = get_labels(1000)
-    X_train, y_train = get_data(hmap)
+    model_name = 'model1.h5'
+    checkpoint_name = "checkpoint1.hdf5"
+    data_size = 100
 
-    print("Training datapoint shape: X_train.shape:{}".format(X_train.shape))
-    print("Training labels shape: y_train.shape:{}".format(y_train.shape))
+    for i in range(1, 16):
+        if(model_name in os.listdir('.')):
+            print("LOADING CURRENT MODEL")
+            hmap = get_labels(i*100+100, i*100)
+            X_train, y_train = get_data(hmap)
+            model = tf.keras.models.load_model(model_name)
+        else:
+            print("CREATING NEW MODEL")
+            hmap = get_labels(100)
+            X_train, y_train = get_data(hmap)
+            model = create_model(X_train)
 
-    epochs = 50
-    batch_size = 20
 
-    model = create_model(X_train)
-    hist = tf.keras.callbacks.History()
+        print("Training datapoint shape: X_train.shape:{}".format(X_train.shape))
+        print("Training labels shape: y_train.shape:{}".format(y_train.shape))
 
-    logdir = "logs/scalars/" + datetime.now().strftime("%Yj%m%d-%H%M%S")
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("checkpoint8.hdf5", verbose=1, save_best_only=True)
+        epochs = 40
+        batch_size = 15
 
-    # Compile model
-    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
-    model.fit = model.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, callbacks=[checkpoint, hist, tensorboard_callback], verbose=1)
-    model.save('model8.h5')
+        hist = tf.keras.callbacks.History()
+
+        logdir = "logs/scalars/" + datetime.now().strftime("%Yj%m%d-%H%M%S")
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
+        checkpoint = tf.keras.callbacks.ModelCheckpoint(checkpoint_name, verbose=1, save_best_only=True)
+
+        # Compile model
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        model.fit = model.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, callbacks=[checkpoint, hist, tensorboard_callback], verbose=1)
+        model.save(model_name)
 
 
 if __name__ == "__main__":
@@ -313,3 +326,4 @@ if __name__ == "__main__":
     
     # Running the model
     train_model()
+    

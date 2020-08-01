@@ -28,7 +28,7 @@ matplotlib                3.2.1
 - If you are going to train the model on video data you need ./videoData directory
 
 ## Image Results
-<img src="./output/Figure_1.png" alt="drawing" width=400px>
+<img src="./output/Figure_1.png" alt="drawing" width=400px> |
 <img src="./output/Figure_2.png" alt="drawing" width=400px>
 <img src="./output/Figure_3.png" alt="drawing" width=400px>
 <img src="./output/Figure_4.png" alt="drawing" width=400px>

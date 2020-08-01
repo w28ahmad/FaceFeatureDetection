@@ -1,13 +1,11 @@
 *.hdf5
 *.h5
 logs
-cersei_test.png
 humans/
-output/
 __pycache__/
 .ipynb_checkpoints/
 list_landmarks_align_celeba.txt
 haarcascade_frontalface_default.xml
 list_landmarks_celeba.txt
 playground.ipynb
-videoData
+videoData/

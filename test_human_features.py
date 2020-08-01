@@ -25,7 +25,7 @@ def run_test():
     hmap = {filename : hmap[filename]}
     
     # Make sure the picture is colored and not grayscale
-    X_train, y_train = get_data(hmap, color=1)
+    X_train, y_train = get_data(hmap, color=1, addRotation=True, addTranslation=True, addZoom=True)
     # predict the image
     predict_labels = detect_points(X_train[0])
     
@@ -42,7 +42,7 @@ def run_test():
     _, x_predict, y_predict = unnormalize(0, x_predict, y_predict)
 
     # Circle the labels
-    image = draw_labels(image, x_vals, y_vals)
+    # image = draw_labels(image, x_vals, y_vals)
     image = draw_labels(image, x_predict, y_predict, color=(0, 100, 100))
     show_image(image.astype(np.uint8))
 

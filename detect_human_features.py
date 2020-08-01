@@ -160,9 +160,9 @@ def normalize(image, x_vals, y_vals):
 
     # Normalize
     image /= 255
-    if x_vals:
+    if x_vals is not None:
         x_vals = (x_vals - WIDTH/2)/(WIDTH/2)
-    if y_vals:
+    if y_vals is not None:
         y_vals = (y_vals - HEIGHT/2)/(HEIGHT/2)
 
     return image, x_vals, y_vals
@@ -181,7 +181,7 @@ def unnormalize(image, x_vals, y_vals):
 
 
 # Returns the training and validation data
-def get_data(hmap, color=0):
+def get_data(hmap, color=0, addRotation=True, addTranslation=True, addZoom=True):
     X = []
     y = []
 
@@ -198,12 +198,17 @@ def get_data(hmap, color=0):
         if color:
             image = color_image(filename)
 
-        # # Add rotation
-        image, x_vals, y_vals = perform_rotation(image, x_vals, y_vals)
-        # # Add translation
-        image, x_vals, y_vals = perform_translation(image, x_vals, y_vals, WIDTH_OFFSET, HEIGHT_OFFSET)
-        # # Add magnification
-        image, x_vals, y_vals = perform_zoom(image, x_vals, y_vals, ZOOM_FACTOR)
+        # Add rotation
+        if addRotation:
+            image, x_vals, y_vals = perform_rotation(image, x_vals, y_vals)
+
+        # Add translation
+        if addTranslation:
+            image, x_vals, y_vals = perform_translation(image, x_vals, y_vals, WIDTH_OFFSET, HEIGHT_OFFSET)
+
+        # Add magnification
+        if addZoom:
+            image, x_vals, y_vals = perform_zoom(image, x_vals, y_vals, ZOOM_FACTOR)
 
         # Normalize
         image, x_vals, y_vals = normalize(image, x_vals, y_vals)

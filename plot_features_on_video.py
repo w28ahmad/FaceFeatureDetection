@@ -4,15 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from detect_human_features import ROOT, define_labels, unnormalize, normalize
 import os
+import imageio
 
-VID = os.path.join(ROOT, "videoData", "homealone.mp4")
 HEIGHT, WIDTH, CHANNELS = (218, 178, 1)
+VID = os.path.join(ROOT, "videoData", "homealone.mp4")
 haarcascade = os.path.join(ROOT, "haarcascade_frontalface_default.xml")
 model = tf.keras.models.load_model("model1.h5")
 
 def detect_features(file=VID):
-    cap = cv2.VideoCapture(0)
-
+    cap = cv2.VideoCapture(VID)
     ret = True
     while(ret):
         # Read through the frames
@@ -25,14 +25,7 @@ def detect_features(file=VID):
             faces = face_cascade.detectMultiScale(gray, 1.3, 5)
             for (x, y, w, h) in faces:
                 try:
-                    # if w > WIDTH and h > HEIGHT:
                     model_input = gray[y:y+HEIGHT, x:x+WIDTH]
-                    # else:
-                    #     model_input_short = gray[y:y+h, x:x+w]
-                    #     color = 0 # Black
-                    #     model_input = np.full((HEIGHT,WIDTH), color, dtype=np.uint8)
-                    #     model_input[:h,:w] = model_input_short
-
                     # Reshape & normalize
                     model_input, _, _ = normalize(model_input, None, None)
                     model_input = model_input.reshape(-1, 218, 178, 1)
